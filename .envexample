@@ -1,0 +1,7 @@
+PORT=8000
+dbInstance=MongoDB
+
+DB=<mongodburi>
+FILE_PATH = <filepath>
+NODE_ENV = <environment>
+SECRET_KEY=<secretkey>
