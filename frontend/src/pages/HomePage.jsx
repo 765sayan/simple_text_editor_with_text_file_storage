@@ -121,7 +121,6 @@ export default function HomePage() {
 
       setFileListState(fileList);
     }
-    console.log(fileListState);
   }
 
   function findElementInArray(array, element) {
@@ -172,7 +171,7 @@ export default function HomePage() {
   }
 
   async function deleteFiles() {
-    let res = await deleteFilesFs(fileList, token);
+    let res = await deleteFilesFs(fileListState, token);
     let listOfDeletedFiles = res.list;
     if (listOfDeletedFiles.length !== 0) {
       let newFilesArray = fileNames.filter((element, index) => {
@@ -237,38 +236,40 @@ export default function HomePage() {
                 </div>
               </div>
               {fileNames.map((element, index) => {
-                return (
-                  <>
-                    <div
-                      key={index}
-                      onClick={(e) => {
-                        filesToBeDeleted(element.filename);
-                        changeCss(e, element);
-                      }}
-                      onDoubleClick={(e) => {
-                        changeCssOnDoubleClick(e);
-                        navigate(`/edit?filename=${element.filename}`);
-                      }}
-                      className="newfile-button"
-                    >
-                      <div className="fileicon-container-class" key={index}>
-                        <label
-                          htmlFor="img"
-                          className="fileicon-label"
-                          key={index}
-                        >
-                          {element.filename}
-                        </label>
-                        <img
-                          id="img"
-                          src={fileIcon}
-                          width={200}
-                          height={200}
-                        ></img>
+                if (element !== undefined) {
+                  return (
+                    <>
+                      <div
+                        key={index}
+                        onClick={(e) => {
+                          filesToBeDeleted(element.filename);
+                          changeCss(e, element);
+                        }}
+                        onDoubleClick={(e) => {
+                          changeCssOnDoubleClick(e);
+                          navigate(`/edit?filename=${element.filename}`);
+                        }}
+                        className="newfile-button"
+                      >
+                        <div className="fileicon-container-class" key={index}>
+                          <label
+                            htmlFor="img"
+                            className="fileicon-label"
+                            key={index}
+                          >
+                            {element.filename}
+                          </label>
+                          <img
+                            id="img"
+                            src={fileIcon}
+                            width={200}
+                            height={200}
+                          ></img>
+                        </div>
                       </div>
-                    </div>
-                  </>
-                );
+                    </>
+                  );
+                }
               })}
             </div>
           </div>

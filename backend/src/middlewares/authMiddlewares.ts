@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { UserDbImplementations } from "../implementations/dbImplementation";
 
-const { verifyToken } = require("../utils/jwtMethods.js");
+import { verifyToken } from "../utils/jwtMethods";
 
 
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
@@ -9,15 +9,16 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     if(req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
         let authToken = req.headers.authorization.split(" ")[1];
         try {
-            let decodedToken = await verifyToken(authToken, process.env.SECRET_KEY);
-            
-            const user = await userCrudInstance.getByUserId(decodedToken);
-            if (user) {
-                req.body.user = user.id;
-                next();
-            }
-            else {
-                res.json({msg: "User Doesn't exist"});
+            const decodedToken = await verifyToken(authToken);
+            if(decodedToken !== undefined) {
+                const user = await userCrudInstance.getByUserId(decodedToken);
+                if (user) {
+                    req.body.user = user.id;
+                    next();
+                }
+                else {
+                    res.json({msg: "User Doesn't exist"});
+                }
             }
         }
         catch (err) {

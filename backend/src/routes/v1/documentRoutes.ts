@@ -1,22 +1,18 @@
 import express from "express";
-import { createFileController, downloadFileController, readFileController, removeFileController, updateFileController } from "../../controllers/documentControllers";
+import { createFileController, downloadFileController, readFileController, updateFileController } from "../../controllers/documentControllers";
 import { auth } from "../../middlewares/authMiddlewares";
 
 const documentRouter = express.Router();
 
 
 
-documentRouter.get('/file/download', downloadFileController);
+documentRouter.get('/file/download', auth, downloadFileController);
 
 
 
 
 
 documentRouter.post('/file', auth, createFileController);
-
-
-
-documentRouter.delete('/file', auth, removeFileController);
 
 documentRouter.put('/file', auth, updateFileController);
 

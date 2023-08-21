@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { UserDbImplementations } from "../implementations/dbImplementation";
 
-const { encryptString, compareString } = require("../utils/stringEncryptionMethods.js");
-const { generateToken } = require("../utils/jwtMethods.js");
+import { encryptString, compareString } from "../utils/stringEncryptionMethods";
+import { generateToken } from "../utils/jwtMethods";
 
 export const loginController = async (req: Request, res: Response) => {
     const userCrudInstance = new UserDbImplementations();

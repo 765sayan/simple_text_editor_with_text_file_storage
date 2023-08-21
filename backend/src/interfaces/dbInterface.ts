@@ -1,3 +1,5 @@
+import { JwtPayload } from "jsonwebtoken";
+
 export interface FileDbInterface {
     getByFileName(filename: string, creator: string): any;
 
@@ -15,7 +17,7 @@ export interface FileDbInterface {
 export interface UserDbInterface {
     getByUserName(username: string): any;
 
-    getByUserId(userId: string): any;
+    getByUserId(userId: string | JwtPayload): any;
 
     createUser(username: string, password: string): any;
 }

@@ -1,10 +1,10 @@
 import {
-  REMOVE_FILE_URL,
   GET_ALL_FILES_URL,
   READ_DOCUMENT_FILE_URL,
   SEND_DOCUMENT_DATA_URL,
   UPDATE_FILE_URL,
   DELETE_FILES_URL,
+  DOWNLOAD_DOCUMENT_FILE_URL,
 } from "../apiUrls/documentApiUrls";
 
 export const getAllFiles = async (token) => {
@@ -41,23 +41,6 @@ export const sendTextDataToBackend = async (filename, textdata, token) => {
   };
   try {
     let res = await fetch(SEND_DOCUMENT_DATA_URL, options);
-    res = await res.json();
-    return res;
-  } catch (err) {
-    return "No Connection To Server";
-  }
-};
-
-export const removeFileFromBackend = async (filename, token) => {
-  const options = {
-    method: "DELETE",
-
-    headers: {
-      authorization: token,
-    },
-  };
-  try {
-    let res = await fetch(REMOVE_FILE_URL(filename), options);
     res = await res.json();
     return res;
   } catch (err) {
@@ -125,6 +108,26 @@ export const deleteFilesFs = async (fileList, token) => {
 
   try {
     let res = await fetch(DELETE_FILES_URL, options);
+    res = await res.json();
+    return res;
+  } catch (err) {
+    return err;
+  }
+};
+
+export const downloadFileService = async (filename, token) => {
+  const options = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: token,
+    },
+  };
+  try {
+    let res = await fetch(
+      `${DOWNLOAD_DOCUMENT_FILE_URL}?filename=${filename}`,
+      options
+    );
     res = await res.json();
     return res;
   } catch (err) {

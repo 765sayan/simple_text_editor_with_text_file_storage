@@ -3,12 +3,13 @@ import { DOWNLOAD_DOCUMENT_FILE_URL } from "../apiUrls/documentApiUrls";
 import "../assets/ComponentCSS.css";
 
 import {
-  removeFileFromBackend,
+  downloadFileService,
   sendTextDataToBackend,
   updateFileData,
 } from "../services/documentServices";
 import FileName from "./FileName";
 import { TokenContext } from "../App";
+import fileDownload from "js-file-download";
 
 export default function HeaderComp(props) {
   const {
@@ -45,19 +46,8 @@ export default function HeaderComp(props) {
       return "";
     }
 
-    const aTag = document.createElement("a");
-    aTag.href = `${DOWNLOAD_DOCUMENT_FILE_URL}?authtoken=${tokenToBeSent}&filename=${filename}`;
-    aTag.setAttribute("download", filename);
-    document.body.appendChild(aTag);
-    aTag.click();
-    aTag.remove();
-
-    setTimeout(async () => {
-      const res = await removeFileFromBackend(filename, authToken);
-      if (res === "No Connection To Server") {
-        alert("No Connection To Server");
-      }
-    }, 200);
+    let res = await downloadFileService(filename, tokenToBeSent);
+    fileDownload(res.textdata, filename);
   }
 
   async function saveData(e) {

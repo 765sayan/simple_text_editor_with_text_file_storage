@@ -2,6 +2,7 @@ import { resolve } from "path";
 import { FileDbInterface, UserDbInterface } from "../interfaces/dbInterface";
 import FileModel from "../models/fileModel";
 import User from "../models/userModel";
+import { JwtPayload } from "jsonwebtoken";
 
 
 
@@ -35,7 +36,7 @@ export class FileDbImplementation implements FileDbInterface {
 
     async createFile(filename: string, textdata: string, creator: string) {
         const fileModelData = {filename, textdata, creator};
-        console.log(fileModelData);
+        
         try {
             let file = await FileModel.find({filename, creator});
             if(file.length === 0) {
@@ -113,7 +114,7 @@ export class UserDbImplementations implements UserDbInterface {
         }
     }
 
-    async getByUserId(userId: string) {
+    async getByUserId(userId: string | JwtPayload) {
         if(userId) {
             try {
                 const user = await User.findById(userId);

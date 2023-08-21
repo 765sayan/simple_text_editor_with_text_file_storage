@@ -1,6 +1,6 @@
 import { UserDbImplementations } from "../implementations/dbImplementation";
 
-const { verifyToken } = require("../utils/jwtMethods.js");
+import { verifyToken } from "./jwtMethods";
 
 
 export const searchParamAuthChecker = async (authToken: string) => {
@@ -8,14 +8,16 @@ export const searchParamAuthChecker = async (authToken: string) => {
     if(authToken && authToken.startsWith("Bearer ")) {
         let token = authToken.split(" ")[1];
         try {
-            let decodedToken = await verifyToken(token, process.env.SECRET_KEY);
+            let decodedToken = await verifyToken(token);
             
-            const user = await userCrudInstance.getByUserId(decodedToken);
-            if(user) {
-                return user;
-            }
-            else {
-                return "Token Wrong";
+            if(decodedToken !== undefined) {
+                const user = await userCrudInstance.getByUserId(decodedToken);
+                if(user) {
+                    return user;
+                }
+                else {
+                    return "Token Wrong";
+                }
             }
         } catch(err) {
             console.log(err);

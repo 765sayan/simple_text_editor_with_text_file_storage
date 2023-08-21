@@ -5,40 +5,31 @@ import { searchParamAuthChecker } from "../utils/securityFunctions";
 
 export const downloadFileController = async (req: Request, res: Response) => {
     const fileName = req.query.filename?.toString();
-    const authToken = req.query.authtoken?.toString();
-    let creator = "";
+    // const authToken = req.query.authtoken?.toString();
+    const authToken = req.body.user;
+    let creator = authToken;
 
-    if(authToken !== undefined) {
-        const resp = await searchParamAuthChecker(authToken);
-        if(resp === "Token Wrong") {
-            res.json({msg: "Not Authenticated"});
-        }
-        else {
-            creator = resp?.id;
-        }
-    }
+    // if(authToken !== undefined) {
+    //     const resp = await searchParamAuthChecker(authToken);
+    //     if(resp === "Token Wrong") {
+    //         res.json({msg: "Not Authenticated"});
+    //     }
+    //     else {
+    //         creator = resp?.id;
+    //     }
+    // }
 
     const fileModelCrudInstance = new FileDbImplementation();
 
     if(fileName !== undefined && creator !== undefined) {
-        let res = await fileModelCrudInstance.getByFileName(fileName, creator);
-        if(res && res.length !== 0 && res.length <= 1) {
-            const responseObject = res[0];
+        let resp = await fileModelCrudInstance.getByFileName(fileName, creator);
+        if(resp && resp.length !== 0 && resp.length <= 1) {
+            const responseObject = resp[0];
             let filename = responseObject.filename;
             let textData = responseObject.textData;
-            createFile(textData, filename);
+            res.json({textdata: textData});       
         }
     }
-
-    res.download(`${process.env.FILE_PATH}/${fileName}`);
-}
-
-export const removeFileController = async (req: Request, res: Response) => {
-    const fileName = req.query.filename?.toString();
-    if(fileName !== undefined) {
-        removeFile(fileName);
-    }
-    res.json({ msg: req.query.filename});
 }
 
 export const readFileController = async (req: Request, res: Response) => {
