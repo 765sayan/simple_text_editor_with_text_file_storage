@@ -17,14 +17,12 @@ app.use(cors());
 
 app.use(express.json());
 
-const db2 = "mongodb://localhost:27017/docsapp";
-
 if(process.env.dbInstance === "MongoDB") {
     if(process.env.DB !== undefined) {
         const db: string = process.env.DB;
 
         mongoose
-            .connect(db2)
+            .connect(db)
             .then(() => {console.log("MongoDB Connected")});
 
     }
