@@ -78,3 +78,54 @@ export const getUserInfoController = async (req: Request, res: Response) => {
     }
 
 }
+
+export const editUserInfoController = async (req: Request, res: Response ) => {
+    const userCrudInstance = new UserDbImplementations();
+
+    const userData = req.body.userdata;
+    const userId: string = req.body.user;
+    if(userId && userData.username && userData.password) {
+        let encryptedPassword = await encryptString(userData.password);
+        const user = await userCrudInstance.updateUserInfo(userData.username, encryptedPassword, userId);
+        if (user) {
+            res.json({user: user});
+        }
+        else {
+            res.json({msg: "err"});
+        }
+    }
+    else if(userId && userData.username === "" || userData.password === "") {
+        let encryptedPassword = "";
+        if(userData.password !== ""){
+            encryptedPassword = await encryptString(userData.password);
+        }
+        const user = await userCrudInstance.updateUserInfo(userData.username, encryptedPassword, userId);
+        if (user) {
+            res.json({user: user});
+        }
+        else {
+            res.json({msg: "err"});
+        }
+    }
+    else {
+        res.json({msg: "err"});
+    }
+}
+
+export const deleteUserInfoController = async (req: Request, res: Response) => {
+    const userCrudInstance = new UserDbImplementations();
+
+    const userId: string = req.body.user;
+    if(userId) {
+        const user = await userCrudInstance.deleteUser(userId);
+        if(user) {
+            res.json({msg: "User Deleted"});
+        }
+        else {
+            res.json({msg: "err"});
+        }
+    }
+    else {
+        res.json({msg: "err"});
+    }
+}

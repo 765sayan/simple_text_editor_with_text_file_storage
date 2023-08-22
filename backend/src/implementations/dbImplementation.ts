@@ -143,4 +143,38 @@ export class UserDbImplementations implements UserDbInterface {
             
         }
     }
+
+    async updateUserInfo(username: string, password: string, userId: string | JwtPayload) {
+        if(userId && username || password) {
+            try {
+                const user = await this.getByUserId(userId);
+
+                if(user) {
+                    
+                    username !== "" ? user.username = username : user.username = user.username;
+                    password !== "" ? user.password = password : user.password = user.password;
+                    user.save();
+                    return user;
+                }
+            }
+            catch (err) {
+                console.log(err);
+            }
+        }
+    }
+
+    async deleteUser(userId: string | JwtPayload) {
+        if(userId) {
+            try {
+                const user = User.findById(userId);
+                if(user) {
+                    user.deleteOne();
+                    return user;
+                }
+            }
+            catch (err) {
+                console.log(err);
+            }
+        }
+    }
 }
