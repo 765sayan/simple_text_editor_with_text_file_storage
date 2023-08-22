@@ -20,8 +20,4 @@ export interface UserDbInterface {
     getByUserId(userId: string | JwtPayload): any;
 
     createUser(username: string, password: string): any;
-
-    updateUserInfo(username: string, password: string, userId: string | JwtPayload): any;
-
-    deleteUser(userId: string | JwtPayload): any;
 }

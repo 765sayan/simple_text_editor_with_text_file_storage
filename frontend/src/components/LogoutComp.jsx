@@ -35,10 +35,6 @@ export default function LogoutComp() {
     }
   }
 
-  function navigateToEditUser() {
-    navigate("/user");
-  }
-
   return (
     <>
       <div className="logout-comp">
@@ -46,15 +42,9 @@ export default function LogoutComp() {
           {username}
         </h2>
         {click === true ? (
-          <div className="logout-comp-container">
-            <button className="logout-btn" onClick={navigateToEditUser}>
-              Edit Account
-            </button>
-
-            <button className="logout-btn" onClick={logout}>
-              Logout
-            </button>
-          </div>
+          <button className="logout-btn" onClick={logout}>
+            Logout
+          </button>
         ) : (
           <button className="logout-btn-hidden" onClick={logout}>
             Logout
