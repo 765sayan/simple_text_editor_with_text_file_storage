@@ -8,7 +8,11 @@ export default function NavigationComp(props) {
 
   function navigateTo(route) {
     if (route !== undefined) {
-      navigate(`/${route}`);
+      if (route !== "edit") {
+        navigate(`/${route}`);
+      } else if (route === "edit") {
+        navigate(`/${route}`, { state: { textData: "", creator: "" } });
+      }
     }
   }
 

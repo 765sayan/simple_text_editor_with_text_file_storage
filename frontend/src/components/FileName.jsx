@@ -3,7 +3,6 @@ import "../assets/ComponentCSS.css";
 
 export default function FileName(props) {
   const { filename, setFileName } = props;
-
   const fileNameCompRef = useRef(null);
   const divCompRef = useRef(null);
 

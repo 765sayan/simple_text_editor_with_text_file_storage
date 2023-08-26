@@ -1,13 +1,15 @@
 import { useState } from "react";
-// import "../assets/ComponentCss.css";
+import "../assets/ComponentCSS.css";
 import { register } from "../services/authServices";
 import { useNavigate } from "react-router-dom";
 
-export default function RegisterComp() {
+export default function RegisterComp(props) {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState("");
   const navigate = useNavigate();
+
+  const { heading } = props;
 
   async function sendCredentials() {
     if (username !== "" && password !== "") {
@@ -26,8 +28,10 @@ export default function RegisterComp() {
   return (
     <>
       <div className="auth-page">
+        <div style={{ margin: "8px" }}>{heading}</div>
         {msg === "" ? "" : <h2 className="fileicon-label">{msg}</h2>}
         <h1>Register</h1>
+
         <label htmlFor="username" className="fileicon-label">
           username
         </label>
@@ -37,6 +41,7 @@ export default function RegisterComp() {
           onChange={(e) => setUserName(e.target.value)}
           className="auth-input"
         ></input>
+
         <label htmlFor="password" className="fileicon-label">
           password
         </label>
@@ -46,6 +51,7 @@ export default function RegisterComp() {
           onChange={(e) => setPassword(e.target.value)}
           className="auth-input"
         ></input>
+
         <input
           className="auth-btn"
           type="submit"

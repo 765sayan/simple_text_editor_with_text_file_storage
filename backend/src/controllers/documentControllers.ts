@@ -1,23 +1,12 @@
 import { Request, Response } from "express";
-import { createFile, readFile, removeFile } from "../utils/crudFile";
-import { FileDbImplementation } from "../implementations/dbImplementation";
-import { searchParamAuthChecker } from "../utils/securityFunctions";
+import { FileDbImplementation, ShareFileDbImplementation, UserDbImplementations } from "../implementations/dbImplementation";
+import { createNewFileIfFileAlreadyExists } from "../utils/newFileCreationUtils";
 
 export const downloadFileController = async (req: Request, res: Response) => {
     const fileName = req.query.filename?.toString();
-    // const authToken = req.query.authtoken?.toString();
     const authToken = req.body.user;
     let creator = authToken;
 
-    // if(authToken !== undefined) {
-    //     const resp = await searchParamAuthChecker(authToken);
-    //     if(resp === "Token Wrong") {
-    //         res.json({msg: "Not Authenticated"});
-    //     }
-    //     else {
-    //         creator = resp?.id;
-    //     }
-    // }
 
     const fileModelCrudInstance = new FileDbImplementation();
 
@@ -53,7 +42,6 @@ export const readFileController = async (req: Request, res: Response) => {
 
 export const createFileController = async (req: Request, res: Response) => {
     const fileModelCrudInstance = new FileDbImplementation();
-
     const fileName: string = req.body.fileName;
     const textData: string = req.body.textData;
     const creator: string = req.body.user;
@@ -61,9 +49,15 @@ export const createFileController = async (req: Request, res: Response) => {
     if(fileName !== undefined && textData !== undefined && creator !== undefined) {
     
         const resp = await fileModelCrudInstance.createFile(fileName, textData, creator);
-        if(resp) {
+        if(resp !== "File Already Exists") {
             res.json(resp);
         }
+        else {
+            const resp = await createNewFileIfFileAlreadyExists(fileName, textData, creator, fileModelCrudInstance, 1);
+            if(resp) {
+                res.json(resp);
+            }
+        }        
     }
     else {
         res.json({msg: "Err"});
@@ -84,4 +78,88 @@ export const updateFileController = async (req: Request, res: Response) => {
         res.json({msg: "err"});
     }
 
+}
+
+export const shareFileController = async (req: Request, res: Response) => {
+    const userCrudInstance = new UserDbImplementations();
+    const fileModelCrudInstance = new FileDbImplementation();
+    const filename = req.body.filename;
+    const username = req.body.username;
+    const creator = req.body.user;
+
+    if(filename && username && creator) {
+        let userResp = await userCrudInstance.getByUserName(username);
+        let fileResp = await fileModelCrudInstance.getByFileName(filename, creator);
+        if(userResp && fileResp && fileResp.length === 1) {
+            const secondaryOwner = userResp.id;
+            const fileFromFileModel = fileResp[0].id;
+            if(secondaryOwner === creator) {
+                res.json({msg: "err"});
+            }   
+            else {
+                const sharedFileCrudInstance = new ShareFileDbImplementation();
+                const sharedFile = await sharedFileCrudInstance.shareFile(creator, fileFromFileModel, secondaryOwner);
+                if(sharedFile) {
+                    res.json({msg: "File Shared"});
+                }
+                else {
+                    res.json({msg: "err"});
+                }
+            }
+        }
+        else {
+            res.json({msg: "err"});
+        }
+    }
+    else {
+        res.json({msg: "err"});
+    }
+}
+
+export const getSecondaryOwnerOfAFileController = async (req: Request, res: Response) => {
+    const sharedFileCrudInstance = new ShareFileDbImplementation();
+    const filename = req.query?.filename;
+    const creator = req.body.user;
+
+    if(filename && creator) {
+        const fileModelCrudInstance = new FileDbImplementation();
+        let file = await fileModelCrudInstance.getByFileName(filename.toString(), creator);
+        if(file && file.length === 1) {
+            let filename = file[0].id;
+        
+
+            let sharedFile = await sharedFileCrudInstance.getByUserIdAndFileName(creator, filename);
+            if(sharedFile && sharedFile.length === 1) {
+                res.json({list: sharedFile[0].secondaryOwners});
+            }
+            else {
+                res.json({msg: "err"});
+            }
+        }
+        else {
+            res.json({msg: "err"});
+        }
+    }
+    else {
+        res.json({msg: "err"});
+    }
+}
+
+export const deleteSecondaryOwnersOfFileController = async (req: Request, res: Response) => {
+    const sharedFileCrudInstance = new ShareFileDbImplementation();
+    const creator = req.body.user;
+    const secondaryOwner = req.query.secondaryowner?.toString();
+    const filename = req.query.filename?.toString();
+    if(creator && secondaryOwner && filename) {
+        let sharedFile = await sharedFileCrudInstance.deleteSecondaryOwnerOfFile(creator, secondaryOwner, filename);
+        if(sharedFile) {
+            res.json({list: sharedFile.secondaryOwners});
+        }
+        else {
+            res.json({msg: "err"});
+        }
+    }
+    else {
+        res.json({msg: "err"});
+    }
 }

@@ -1,7 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import fileIcon from "../assets/fileIcon.svg";
 import { useContext, useEffect, useState } from "react";
-import { deleteFilesFs, getAllFiles } from "../services/documentServices";
+import {
+  deleteFilesFs,
+  getAllFiles,
+  getAllSharedFiles,
+} from "../services/documentServices";
 import LogoutComp from "../components/LogoutComp";
 import { getFromLocalStorage } from "../utils/localStorageUtils";
 import NavigationComp from "../components/NavigationComp";
@@ -12,9 +16,7 @@ import "../assets/ComponentCSS.css";
 export default function HomePage() {
   const navigate = useNavigate();
 
-  const [fileNames, setFileNames] = useState([""]);
-
-  // let fileList = new Array();
+  const [fileNames, setFileNames] = useState([]);
 
   let fileNamesTemp = new Array();
 
@@ -22,25 +24,49 @@ export default function HomePage() {
 
   const [createFileState, setCreateFileState] = useState(0);
 
+  const [sharedFilesList, setSharedFilesList] = useState([]);
+
   const token = useContext(TokenContext);
   const setToken = useContext(SetTokenContext);
 
   async function listOfFiles(authToken) {
     let res = await getAllFiles(authToken);
     if (res !== undefined) {
-      let listOfFilesTemp = res.listOfFileFs;
-      listOfFilesTemp.map((element, index) => {
+      if (!res.msg && res.msg !== "empty") {
+        let listOfFilesTemp = res.listOfFileFs;
+        listOfFilesTemp.map((element, index) => {
+          let fileObject = {
+            _id: element._id,
+            _v: element._v,
+            textData: element.textData,
+            filename: element.filename,
+            state: "0",
+          };
+          fileNamesTemp.push(fileObject);
+        });
+        setFileNames(fileNamesTemp);
+        fileNamesTemp = new Array();
+      }
+    }
+  }
+
+  async function listOfSharedFiles(authToken) {
+    let sharedFileNamesTemp = [];
+    let res = await getAllSharedFiles(authToken);
+    if (res !== undefined) {
+      let listOfSharedFilesTemp = res.list;
+      listOfSharedFilesTemp.map((element) => {
         let fileObject = {
-          _id: element._id,
-          _v: element._v,
-          textData: element.textData,
-          filename: element.filename,
+          id: element.fileName.id,
+          creator: element.primaryOwner.username,
+          textData: element.fileName.textData,
+          filename: element.fileName.filename,
           state: "0",
         };
-        fileNamesTemp.push(fileObject);
+        sharedFileNamesTemp.push(fileObject);
       });
-      setFileNames(fileNamesTemp);
-      fileNamesTemp = new Array();
+      setSharedFilesList(sharedFileNamesTemp);
+      sharedFileNamesTemp = [];
     }
   }
 
@@ -51,6 +77,7 @@ export default function HomePage() {
         setToken(tokenValue);
         navigate("");
         listOfFiles(tokenValue);
+        listOfSharedFiles(tokenValue);
       } else {
         setToken("");
         navigate("/auth");
@@ -62,39 +89,6 @@ export default function HomePage() {
   }, []);
 
   function filesToBeDeleted(filename) {
-    // let existingFile = fileList.find((e, i) => {
-    //   if (e === filename) {
-    //     return e;
-    //   }
-    // });
-
-    // if (existingFile === undefined) {
-    //   fileList.push(filename);
-    // } else {
-    //   fileList = fileList.filter((element, index) => {
-    //     if (element !== filename) {
-    //       return element;
-    //     }
-    //   });
-    // }
-
-    // fileNames.map((element, index) => {
-    //   if (element.state === "0") {
-    //     fileList.push(filename);
-    //   } else {
-    //     fileList = fileList.filter((e, i) => {
-    //       if (element.filename !== e) {
-    //         return e;
-    //       }
-    //     });
-    //   }
-    // });
-    // let existingFile = fileListState.find((e, i) => {
-    //   if (e === filename) {
-    //     return e;
-    //   }
-    // });
-
     let existingFile = false;
 
     for (let i = 0; i < fileListState.length; i++) {
@@ -104,8 +98,6 @@ export default function HomePage() {
     }
 
     if (existingFile === false) {
-      // fileListState.push(filename);
-      // const fileListTemp = fileListState.copyWithin(0, 0, fileListState.length);
       const fileListTemp = [];
       fileListState.map((element, index) => {
         fileListTemp.push(element);
@@ -137,12 +129,11 @@ export default function HomePage() {
     if (element.state === "1") {
       e.target.style.border = "none";
       e.target.style.boxShadow = "0px 0px 0px 0px";
+      e.target.style.padding = "0px";
       element.state = "0";
     } else {
       e.target.style.border = "hidden";
       e.target.style.borderRadius = "10px";
-      // e.target.style.borderColor = "#2874f0";
-      // e.target.style.borderWidth = "2px";
       e.target.style.padding = "8px";
       e.target.style.boxShadow = "1px 1px 1px 1px";
       element.state = "1";
@@ -162,8 +153,6 @@ export default function HomePage() {
     } else {
       e.target.style.border = "hidden";
       e.target.style.borderRadius = "10px";
-      // e.target.style.borderColor = "#2874f0";
-      // e.target.style.borderWidth = "2px";
       e.target.style.padding = "8px";
       e.target.style.boxShadow = "1px 1px 1px 1px";
       setCreateFileState(1);
@@ -184,97 +173,235 @@ export default function HomePage() {
 
       setFileNames(newFilesArray);
     } else {
-      let noFile = new Array();
-
-      let fileObject = {
-        _id: 0,
-        _v: 0,
-        textData: "",
-        filename: "No File",
-        state: "0",
-      };
-      noFile.push(fileObject);
-      setFileNames(noFile);
     }
-    fileList = [];
+    let fileList = [];
     setFileListState(fileList);
   }
 
   return (
     <>
-      {fileNames.length === 0 ? (
-        ""
-      ) : (
-        <>
-          <div className="btn-container">
-            <NavigationComp routeToNavigateTo="edit" routeName="Edit" />
-            <LogoutComp />
-          </div>
+      <div className="btn-container">
+        <NavigationComp routeToNavigateTo="edit" routeName="Edit" />
+        <LogoutComp />
+      </div>
 
-          <div className="page-container">
-            {fileListState.length >= 1 ? (
-              <button className="delete-btn" onClick={deleteFiles}>
-                <p className="btn-text">Delete Files</p>
-              </button>
-            ) : (
-              ""
-            )}
+      <div className="page-container">
+        <>
+          {sharedFilesList && sharedFilesList.length !== 0 ? (
             <div className="page">
               <div
-                onClick={(e) => createFileCssChange(e)}
-                onDoubleClick={(e) => {
-                  changeCssOnDoubleClick(e);
-                  navigate(`/edit`);
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  margin: "8px",
                 }}
-                className="newfile-button"
               >
-                <div className="fileicon-container-class">
-                  <label htmlFor="img" className="fileicon-label">
-                    New File
-                  </label>
-                  <img id="img" src={fileIcon} width={200} height={200}></img>
+                <h2
+                  style={{
+                    color: "#2874f0",
+                    border: "hidden",
+                    borderRadius: "10px",
+                    boxShadow: "1px 1px 1px 1px",
+                    padding: "8px",
+                  }}
+                >
+                  Documents Shared With You By Others
+                </h2>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "100%",
+                    padding: "8px",
+                  }}
+                >
+                  {sharedFilesList.map((element, index) => {
+                    if (element !== undefined) {
+                      return (
+                        <>
+                          <div
+                            key={index}
+                            onClick={(e) => {
+                              changeCss(e, element);
+                            }}
+                            onDoubleClick={(e) => {
+                              navigate(`/edit?filename=${element.filename}`, {
+                                state: {
+                                  textData: element.textData,
+                                  creator: element.creator,
+                                  showSharedComp: 0,
+                                },
+                              });
+                            }}
+                            className="newfile-button"
+                          >
+                            <div
+                              className="fileicon-container-class"
+                              key={index}
+                            >
+                              <label
+                                htmlFor="img"
+                                className="fileicon-label"
+                                key={index}
+                              >
+                                {element.filename}
+                              </label>
+                              <img
+                                id="img"
+                                src={fileIcon}
+                                width={200}
+                                height={200}
+                              ></img>
+                            </div>
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  color: "Green",
+                                  border: "hidden",
+                                  borderRadius: "4px",
+                                  boxShadow: "1px 1px 1px 1px",
+                                  maxWidth: "max-content",
+                                  minWidth: "80px",
+                                  margin: "8px",
+                                }}
+                              >
+                                <p
+                                  style={{
+                                    fontSize: "20px",
+                                    color: "green",
+                                    margin: "4px",
+                                  }}
+                                >
+                                  {element.creator}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      );
+                    }
+                  })}
                 </div>
               </div>
-              {fileNames.map((element, index) => {
-                if (element !== undefined) {
-                  return (
-                    <>
-                      <div
-                        key={index}
-                        onClick={(e) => {
-                          filesToBeDeleted(element.filename);
-                          changeCss(e, element);
-                        }}
-                        onDoubleClick={(e) => {
-                          changeCssOnDoubleClick(e);
-                          navigate(`/edit?filename=${element.filename}`);
-                        }}
-                        className="newfile-button"
-                      >
-                        <div className="fileicon-container-class" key={index}>
-                          <label
-                            htmlFor="img"
-                            className="fileicon-label"
-                            key={index}
-                          >
-                            {element.filename}
-                          </label>
-                          <img
-                            id="img"
-                            src={fileIcon}
-                            width={200}
-                            height={200}
-                          ></img>
+            </div>
+          ) : (
+            ""
+          )}
+          {fileListState.length >= 1 ? (
+            <button className="delete-btn" onClick={deleteFiles}>
+              <p className="btn-text">Delete Files</p>
+            </button>
+          ) : (
+            ""
+          )}
+
+          <div className="page">
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "8px",
+              }}
+            >
+              <h2
+                style={{
+                  color: "#2874f0",
+                  border: "hidden",
+                  borderRadius: "10px",
+                  boxShadow: "1px 1px 1px 1px",
+                  padding: "8px",
+                }}
+              >
+                Documents Created By You
+              </h2>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%",
+                  padding: "8px",
+                }}
+              >
+                <div
+                  onClick={(e) => createFileCssChange(e)}
+                  onDoubleClick={(e) => {
+                    changeCssOnDoubleClick(e);
+                    navigate(`/edit`, {
+                      state: { textData: "", creator: "", showSharedComp: 0 },
+                    });
+                  }}
+                  className="newfile-button"
+                >
+                  <div className="fileicon-container-class">
+                    <label htmlFor="img" className="fileicon-label">
+                      New File
+                    </label>
+                    <img id="img" src={fileIcon} width={200} height={200}></img>
+                  </div>
+                </div>
+                {fileNames.map((element, index) => {
+                  if (element !== undefined) {
+                    return (
+                      <>
+                        <div
+                          key={index}
+                          onClick={(e) => {
+                            filesToBeDeleted(element.filename);
+                            changeCss(e, element);
+                          }}
+                          onDoubleClick={(e) => {
+                            changeCssOnDoubleClick(e);
+                            navigate(`/edit?filename=${element.filename}`, {
+                              state: {
+                                textData: "",
+                                showSharedComp: 1,
+                              },
+                            });
+                          }}
+                          className="newfile-button"
+                        >
+                          <div className="fileicon-container-class" key={index}>
+                            <label
+                              htmlFor="img"
+                              className="fileicon-label"
+                              key={index}
+                            >
+                              {element.filename}
+                            </label>
+                            <img
+                              id="img"
+                              src={fileIcon}
+                              width={200}
+                              height={200}
+                            ></img>
+                          </div>
                         </div>
-                      </div>
-                    </>
-                  );
-                }
-              })}
+                      </>
+                    );
+                  }
+                })}
+              </div>
             </div>
           </div>
         </>
-      )}
+      </div>
     </>
   );
 }

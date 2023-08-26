@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import CenterComp from "../components/CenterComp";
 import HeaderComp from "../components/HeaderComp";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { readFile } from "../services/documentServices";
 import { getFromLocalStorage } from "../utils/localStorageUtils";
 import LogoutComp from "../components/LogoutComp";
@@ -24,12 +24,35 @@ export default function EditorPage() {
   const token = useContext(TokenContext);
   const setToken = useContext(SetTokenContext);
 
+  const textDataFromHomePage = useLocation();
   useEffect(() => {
     if (getFromLocalStorage("auth")) {
       if (getFromLocalStorage("auth").id) {
         let tokenValue = getFromLocalStorage("auth").id;
         setToken(`Bearer ${tokenValue}`);
-        navigate("");
+
+        if (
+          fileName !== undefined &&
+          fileName !== null &&
+          textDataFromHomePage.state.textData === ""
+        ) {
+          let res = readFile(fileName, `Bearer ${tokenValue}`);
+          res.then((res) => {
+            if (res !== "No Connection To Server") {
+              setFileData(res.fileData);
+              setFileName(fileName);
+              setUpdateFile(true);
+            }
+          });
+        } else if (
+          fileName !== undefined &&
+          fileName !== null &&
+          textDataFromHomePage.state.textData !== ""
+        ) {
+          setFileData(textDataFromHomePage.state.textData);
+          setFileName(fileName);
+          setUpdateFile(false);
+        }
       } else {
         setToken("");
         navigate("/auth");
@@ -44,36 +67,54 @@ export default function EditorPage() {
 
   const fileName = searchParams?.get("filename");
 
-  if (fileName !== undefined && fileName !== null) {
-    let res = readFile(fileName, token);
-    res.then((res) => {
-      if (res !== "No Connection To Server") {
-        setFileData(res.fileData);
-        setFileName(fileName);
-        setUpdateFile(true);
-      }
-    });
-  }
-
   return (
     <>
-      <div className="btn-container">
-        <NavigationComp routeToNavigateTo="" routeName="Files" />
-        <LogoutComp />
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100%",
+        }}
+      >
+        <div className="btn-container">
+          <NavigationComp routeToNavigateTo="" routeName="Files" />
+          <LogoutComp />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            border: "hidden",
+            borderRadius: "10px",
+            marginTop: "120px",
+            marginLeft: "4px",
+            marginRight: "4px",
+            boxShadow: "1px 1px 1px 1px",
+            minWidth: "98%",
+            backgroundColor: "#ffff",
+          }}
+        >
+          <HeaderComp
+            setFontData={setFontData}
+            currentFontData={fontData}
+            textArea={textArea}
+            filename={fileName ? fileName : filename}
+            setFileName={setFileName}
+            updateFile={updateFile}
+            fileCreator={textDataFromHomePage.state.creator}
+            showSharedComp={textDataFromHomePage.state.showSharedComp}
+          />
+          <CenterComp
+            fontDataProp={fontData}
+            textArea={textArea}
+            fileData={fileData}
+          />
+        </div>
       </div>
-      <HeaderComp
-        setFontData={setFontData}
-        currentFontData={fontData}
-        textArea={textArea}
-        filename={filename}
-        setFileName={setFileName}
-        updateFile={updateFile}
-      />
-      <CenterComp
-        fontDataProp={fontData}
-        textArea={textArea}
-        fileData={fileData}
-      />
     </>
   );
 }

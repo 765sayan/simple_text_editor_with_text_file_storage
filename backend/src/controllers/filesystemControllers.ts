@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { FileDbImplementation } from "../implementations/dbImplementation";
+import { FileDbImplementation, ShareFileDbImplementation } from "../implementations/dbImplementation";
 
 
 
@@ -19,7 +19,7 @@ export const getAllFilesFromFs = async (req: Request, res: Response) => {
             res.json({listOfFileFs});
         }
         else {
-            res.json({empty})
+            res.json({msg: "empty"  })
         }
     }
     else {
@@ -40,3 +40,19 @@ export const deleteFilesFs = async (req: Request, res: Response) => {
     }
 }
 
+export const getSharedFileWithUserController = async (req: Request, res: Response) => {
+    const sharedFileCrudInstance = new ShareFileDbImplementation();
+    const userId: string = req.body.user;
+    if(userId) {
+        let sharedFiles = await sharedFileCrudInstance.getSharedFilesWithUser(userId);
+        if(sharedFiles) {
+            res.json({list: sharedFiles});
+        }
+        else {
+            res.json({msg: "err"});
+        }
+    }
+    else {
+        res.json({msg: "err"});
+    }
+}

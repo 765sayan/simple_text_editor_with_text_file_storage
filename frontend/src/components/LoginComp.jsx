@@ -4,7 +4,7 @@ import { login } from "../services/authServices";
 import { useNavigate } from "react-router-dom";
 import { SetTokenContext, TokenContext } from "../App";
 
-export default function LoginComp() {
+export default function LoginComp(props) {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState("");
@@ -12,6 +12,8 @@ export default function LoginComp() {
 
   const token = useContext(TokenContext);
   const setToken = useContext(SetTokenContext);
+
+  const { heading } = props;
 
   async function sendCredentials() {
     if (username !== "" && password !== "") {
@@ -31,8 +33,10 @@ export default function LoginComp() {
   return (
     <>
       <div className="auth-page">
+        <div style={{ margin: "8px" }}>{heading}</div>
         {msg === "" ? "" : <h2 className="fileicon-label">{msg}</h2>}
         <h1>Login</h1>
+
         <label htmlFor="username" className="fileicon-label">
           username
         </label>
@@ -42,6 +46,7 @@ export default function LoginComp() {
           onChange={(e) => setUserName(e.target.value)}
           className="auth-input"
         ></input>
+
         <label htmlFor="password" className="fileicon-label">
           password
         </label>
@@ -51,6 +56,7 @@ export default function LoginComp() {
           onChange={(e) => setPassword(e.target.value)}
           className="auth-input"
         ></input>
+
         <input
           className="auth-btn"
           type="submit"

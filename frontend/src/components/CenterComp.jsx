@@ -1,12 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import "../assets/ComponentCSS.css";
 
 export default function CenterComp(props) {
   const { fontDataProp, textArea, fileData } = props;
-  // const textArea = useRef(null);
   const fontFeatures = {
     fontSize: "20",
-    // fontFamily: "Arial",
   };
 
   const [scrollHeightState, setScrollHeightState] = useState(708);
@@ -22,9 +20,6 @@ export default function CenterComp(props) {
 
   useEffect(() => {
     textArea.current.style.fontSize = `${fontFeatures.fontSize}px`;
-    // textArea.current.style.fontFamily = fontFeatures.fontFamily;
-    // console.log(fileData);
-    // textArea.current.value = fileData;
   }, []);
 
   useEffect(() => {
@@ -35,11 +30,6 @@ export default function CenterComp(props) {
     if (fontDataProp.fontSize !== textArea.current.style.fontSize) {
       textArea.current.style.fontSize = `${fontDataProp.fontSize}px`;
     }
-
-    // if (fontDataProp.fontFamily !== textArea.current.style.fontFamily) {
-    //   textArea.current.style.fontFamily = "";
-    //   textArea.current.style.fontFamily = fontDataProp.fontFamily;
-    // }
   }, [fontDataProp]);
 
   function keyUpEventListener(e) {

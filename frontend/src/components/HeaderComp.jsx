@@ -10,6 +10,7 @@ import {
 import FileName from "./FileName";
 import { TokenContext } from "../App";
 import fileDownload from "js-file-download";
+import ShareComp from "./ShareComp";
 
 export default function HeaderComp(props) {
   const {
@@ -19,12 +20,13 @@ export default function HeaderComp(props) {
     filename,
     setFileName,
     updateFile,
+    fileCreator,
+    showSharedComp,
   } = props;
 
   const [authToken, setAuthToken] = useState("");
 
   const token = useContext(TokenContext);
-
   useEffect(() => {
     if (token !== "") {
       setAuthToken(token);
@@ -66,13 +68,49 @@ export default function HeaderComp(props) {
   return (
     <>
       <div id="header" className="header">
+        {fileCreator ? (
+          <h2
+            style={{
+              border: "solid",
+              borderColor: "#2874f0",
+              borderRadius: "10px",
+              backgroundColor: "#fff",
+              fontSize: "20px",
+              minWidth: "100px",
+              maxWidth: "120px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "2px",
+              marginRight: "20px",
+              marginLeft: "20px",
+            }}
+          >
+            <h4>Creator: </h4>
+            <h8 style={{ color: "#6299f1" }}>{fileCreator}</h8>
+          </h2>
+        ) : (
+          ""
+        )}
         <FileName filename={filename} setFileName={setFileName} />
         <button className="btn" onClick={downloadFile}>
           download
         </button>
-        <button className="btn" onClick={(e) => saveData(e)}>
-          Save
-        </button>
+        {showSharedComp && showSharedComp === 1 ? (
+          <button className="btn" onClick={(e) => saveData(e)}>
+            Save Updates
+          </button>
+        ) : (
+          <button className="btn" onClick={(e) => saveData(e)}>
+            Create File
+          </button>
+        )}
+        {showSharedComp && showSharedComp === 1 ? (
+          <ShareComp filename={filename} />
+        ) : (
+          ""
+        )}
         <div className="font-components-class">
           <label className="header-components font-size-label-class">
             Font Size

@@ -7,18 +7,50 @@
   --main-color: #2874f0;
   --secondary-color: #6299f1;
   --text-area-color: #fff;
-  --center-comp-min-height: 80vh;
+  --center-comp-min-height: 50vh;
   --main-font: "Times New Roman", Times, serif;
 }
 
+.logout-comp-container {
+  margin-top: 2px;
+  margin-bottom: 2px;
+  padding: 2px;
+  border: hidden;
+  background-color: var(--secondary-color);
+  border-radius: 10px;
+  box-shadow: 2px 2px 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.sharecomp-class {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .header {
-  height: 20vh;
-  width: 100%;
-  background: var(--main-color);
+  min-height: 18vh;
+  max-height: max-content;
+  align-self: center;
+  min-width: 90%;
+  max-width: max-content;
+  background: linear-gradient(var(--secondary-color), var(--text-area-color));
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  border-style: hidden;
+  border-radius: 10px;
+  /* border-color: #2874f0; */
+  box-shadow: 1px 1px 1px 1px;
+  margin: 8px;
+  position: fixed;
+  top: 120px;
+  bottom: 100vh;
 }
 
 .header-components {
@@ -46,11 +78,12 @@
 .center-comp {
   min-height: var(--center-comp-min-height);
   width: 100%;
-  background: linear-gradient(var(--main-color), var(--text-area-color));
+  padding-top: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
   max-height: var(--center-comp-min-height) + max-content;
+  margin-top: 20vh;
 }
 
 .text-area-class {
@@ -75,10 +108,12 @@
   min-height: max-content;
   width: 70%;
   background-color: var(--text-area-color);
-  border: solid;
-  border-radius: 2px;
-  border-color: var(--text-area-color);
-  box-shadow: 2px 2px 2px 2px;
+  border-style: hidden;
+  border-width: 4px;
+  border-radius: 10px;
+  border-color: var(--main-color);
+  border-bottom: none;
+  box-shadow: 1px 1px 1px 1px;
   display: flex;
   justify-content: center;
 }
@@ -101,7 +136,10 @@
   border-radius: 10px;
   border: none;
   padding: 0;
-  background-color: var(--main-color);
+  background-color: linear-gradient(
+    var(--secondary-color),
+    var(--text-area-color)
+  );
 }
 
 .input-class:focus {
@@ -113,9 +151,10 @@
   margin-left: 10px;
   max-width: max-content;
   border: solid;
-  border-color: var(--text-area-color);
+  /* border-color: var(--text-area-color); */
+  border-color: var(--main-color);
   border-radius: 10px;
-  box-shadow: 1px 1px 1px 1px;
+  /* box-shadow: 1px 1px 1px 1px; */
 }
 
 .filename-heading {
@@ -152,6 +191,7 @@
   border-width: 20px;
   box-shadow: 1px 1px 1px 1px;
   background-color: var(--text-area-color);
+  max-width: max-content;
 }
 
 .fileicon-container-class {
@@ -176,6 +216,11 @@
   border: hidden;
   border-radius: 10px;
   background-color: var(--main-color);
+  box-shadow: 1px 1px 1px 1px;
+}
+
+.delete-btn:active {
+  box-shadow: 0px 0px 0px 0px;
 }
 
 .btn-text {
@@ -185,6 +230,8 @@
 .page-container {
   display: flex;
   flex-direction: column;
+  margin-top: 10vh;
+  align-items: center;
 }
 
 .auth-page-container {
@@ -200,11 +247,13 @@
   width: 20%;
   height: 40vh;
   font-size: 20px;
-  border: hidden;
+  border: solid;
   box-shadow: 1px 1px 1px 1px;
   border-radius: 10px;
   margin: 20vh;
-  background-color: var(--main-color);
+  /* background-color: var(--main-color); */
+  border-color: var(--main-color);
+  padding: 8px;
 }
 
 .auth-input {
@@ -220,7 +269,7 @@
 }
 
 .auth-btn {
-  margin: 40px;
+  margin: 25px;
   border: hidden;
   border-radius: 10px;
   background-color: var(--secondary-color);
@@ -252,10 +301,23 @@
   align-items: center;
   justify-content: center;
   width: 100%;
+  margin-bottom: 2px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  padding: 2px;
+  position: fixed;
+  top: 0px;
+  bottom: 90vh;
+  border: hidden;
+  box-shadow: 1px 1px 1px 1px;
+  height: max-content;
+  background: var(--text-area-color);
 }
 
 .username-class {
-  border: none;
+  border: solid;
+  border-color: var(--main-color);
   border-radius: 20px;
   margin-left: 5px;
   margin-right: 20px;
@@ -263,12 +325,12 @@
   min-width: 25px;
   max-width: max-content;
   padding: 4px;
-  background-color: var(--main-color);
-  color: var(--text-area-color);
+  /* background-color: var(--main-color); */
+  /* color: var(--text-area-color); */
 }
 
 .logout-btn {
-  font-size: 20px;
+  font-size: 18px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -279,10 +341,11 @@
   margin-left: 5px;
   margin-right: 5px;
   border: hidden;
+  border-color: var(--main-color);
   border-radius: 10px;
   padding: 10px;
   height: 28px;
-  min-width: 0px;
+  min-width: 120px;
   max-width: max-content;
   cursor: pointer;
   animation-name: custom-animation-1;
@@ -463,14 +526,70 @@
 
   .auth-input {
     width: 5vh;
-    height: 10vh;
+    height: 5vh;
   }
 
   .auth-page-container {
-    flex-direction: inherit;
-    /* flex-wrap: wrap;
-    align-items: left;
-    justify-content: center; */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20vh;
+  }
+
+  .auth-page {
+    width: 80%;
+    font-size: 20px;
+    margin-top: 0vh;
+    margin-bottom: 5vh;
+    padding: 20px;
+  }
+
+  .btn-container {
+    width: 100%;
+    height: max-content;
+    padding: 2px;
+  }
+
+  .logout-btn {
+    font-size: 10px;
+  }
+
+  .logout-comp {
+    /* margin-left: 1vh; */
+  }
+
+  .navigate-btn {
+    font-size: 10px;
+    /* margin-right: 1vh; */
+  }
+
+  .username-class {
+    font-size: 10px;
+    height: 20px;
+    width: 20px;
+    padding: 8px;
+  }
+
+  .page {
+    flex-direction: row;
+    /* align-items: center; */
+    padding: 8px;
+  }
+
+  .newfile-button {
+    height: 20px;
+    width: 20px;
+  }
+
+  img {
+    height: 20px;
+    width: 20px;
+  }
+
+  .fileicon-label {
+    display: flex;
+    flex-direction: row;
+    font-size: 10px;
   }
 }
 

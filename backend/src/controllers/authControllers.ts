@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { UserDbImplementations } from "../implementations/dbImplementation";
+import { FileDbImplementation, ShareFileDbImplementation, UserDbImplementations } from "../implementations/dbImplementation";
 
 import { encryptString, compareString } from "../utils/stringEncryptionMethods";
 import { generateToken } from "../utils/jwtMethods";
@@ -77,4 +77,71 @@ export const getUserInfoController = async (req: Request, res: Response) => {
         res.json({msg: "err"});
     }
 
+}
+
+export const editUserInfoController = async (req: Request, res: Response ) => {
+    const userCrudInstance = new UserDbImplementations();
+
+    const userData = req.body.userdata;
+    const userId: string = req.body.user;
+    if(userId && userData.username && userData.password) {
+        let encryptedPassword = await encryptString(userData.password);
+        const user = await userCrudInstance.updateUserInfo(userData.username, encryptedPassword, userId);
+        if (user) {
+            res.json({user: user});
+        }
+        else {
+            res.json({msg: "err"});
+        }
+    }
+    else if(userId && userData.username === "" || userData.password === "") {
+        let encryptedPassword = "";
+        if(userData.password !== ""){
+            encryptedPassword = await encryptString(userData.password);
+        }
+        const user = await userCrudInstance.updateUserInfo(userData.username, encryptedPassword, userId);
+        if (user) {
+            res.json({user: user});
+        }
+        else {
+            res.json({msg: "err"});
+        }
+    }
+    else {
+        res.json({msg: "err"});
+    }
+}
+
+export const deleteUserInfoController = async (req: Request, res: Response) => {
+    const userCrudInstance = new UserDbImplementations();
+    const fileModelCrudInstance = new FileDbImplementation();
+    const sharedFileCrudInstance = new ShareFileDbImplementation();
+
+    const userId: string = req.body.user;
+    if(userId) {
+        const user = await userCrudInstance.deleteUser(userId);
+        const var1 = 2;
+        if(var1 === 2) {
+            const sharedFiles = await sharedFileCrudInstance.getAll();
+            if(sharedFiles) {
+                for(let i=0; i<sharedFiles?.length; i++) {
+                    await sharedFileCrudInstance.deleteSecondaryOwnerOfFileForUserDelete(sharedFiles[i].id, userId, sharedFiles[i].fileName);
+                }
+            }
+            
+            const files = await fileModelCrudInstance.getAllFiles(userId);
+            if(files && files.length !== 0) {
+                for(let i=0; i<files.length; i++) {
+                    await fileModelCrudInstance.deleteFile(files[i].filename, userId);            
+                }
+            }
+            res.json({msg: "User Deleted"});
+        }
+        else {
+            res.json({msg: "err"});
+        }
+    }
+    else {
+        res.json({msg: "err"});
+    }
 }

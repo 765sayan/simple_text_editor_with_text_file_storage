@@ -1,4 +1,10 @@
-import { LOGIN_URL, REGISTER_URL } from "../apiUrls/authApiUrls";
+import {
+  DELETE_URL,
+  EDIT_URL,
+  GET_USER_INFO_URL,
+  LOGIN_URL,
+  REGISTER_URL,
+} from "../apiUrls/authApiUrls";
 import { saveToLocalStorage } from "../utils/localStorageUtils";
 
 export const register = async (credentials) => {
@@ -52,6 +58,75 @@ export const login = async (credentials) => {
       saveToLocalStorage("auth", res);
     }
     return res;
+  } catch (err) {
+    return err;
+  }
+};
+
+export const updateUser = async (credentials, token) => {
+  const { username, password } = credentials;
+
+  const data = {
+    userdata: {
+      username: username,
+      password: password,
+    },
+  };
+
+  const options = {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: token,
+    },
+    body: JSON.stringify(data),
+  };
+
+  try {
+    let res = await fetch(EDIT_URL, options);
+    res = await res.json();
+    if (res.user) {
+      return res.user;
+    }
+  } catch (err) {
+    return err;
+  }
+};
+
+export const deleteUser = async (token) => {
+  const options = {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: token,
+    },
+  };
+
+  try {
+    let res = await fetch(DELETE_URL, options);
+    res = await res.json();
+    if (res.msg && res.msg === "User Deleted") {
+      return res.msg;
+    }
+  } catch (err) {
+    return err;
+  }
+};
+
+export const getUserInfoService = async (token) => {
+  const options = {
+    method: "GET",
+    headers: {
+      authorization: token,
+    },
+  };
+
+  try {
+    let res = await fetch(GET_USER_INFO_URL, options);
+    res = await res.json();
+    if (res && !res.msg && res.msg !== "err") {
+      return res;
+    }
   } catch (err) {
     return err;
   }
