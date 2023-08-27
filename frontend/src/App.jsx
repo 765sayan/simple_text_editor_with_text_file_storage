@@ -11,6 +11,7 @@ import {
   getFromLocalStorage,
   saveToLocalStorage,
 } from "./utils/localStorageUtils";
+import ErrorPage from "./pages/ErrorPage";
 
 export const TokenContext = React.createContext();
 export const SetTokenContext = React.createContext();
@@ -53,6 +54,7 @@ function App() {
             <Route path="/edit" element={<EditorPage />} />
             <Route path="/user" element={<EditUser />} />
             <Route path="/auth" element={<AuthPage />} />
+            <Route path="*" element={<ErrorPage />} />
           </Route>
         </Routes>
       </TokenContext.Provider>

@@ -61,8 +61,6 @@ export default function EditorPage() {
       setToken("");
       navigate("/auth");
     }
-
-    setInterval(() => {}, 400);
   }, []);
 
   const fileName = searchParams?.get("filename");
@@ -105,8 +103,16 @@ export default function EditorPage() {
             filename={fileName ? fileName : filename}
             setFileName={setFileName}
             updateFile={updateFile}
-            fileCreator={textDataFromHomePage.state.creator}
-            showSharedComp={textDataFromHomePage.state.showSharedComp}
+            fileCreator={
+              textDataFromHomePage && textDataFromHomePage.state
+                ? textDataFromHomePage.state.creator
+                : ""
+            }
+            showSharedComp={
+              textDataFromHomePage && textDataFromHomePage.state
+                ? textDataFromHomePage.state.showSharedComp
+                : ""
+            }
           />
           <CenterComp
             fontDataProp={fontData}

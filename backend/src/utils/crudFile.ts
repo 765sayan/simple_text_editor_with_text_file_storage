@@ -10,4 +10,4 @@ export const removeFile = (filename: string) => {
 
 export const readFile = (filename: string) => {
   return fs.readFileSync(`${process.env.FILE_PATH}/${filename}`, "utf-8");
-}
+};
