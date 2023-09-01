@@ -33,7 +33,6 @@ export class FileDbImplementation implements FileDbInterface {
     try {
       let file = await FileModel.find({ filename, creator });
       if (file.length === 0) {
-        console.log("working");
         try {
           const fileModelSingleObject = await FileModel.create({
             creator: fileModelData.creator,
