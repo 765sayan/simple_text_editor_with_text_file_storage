@@ -94,9 +94,13 @@ export default function HeaderComp(props) {
           ""
         )}
         <FileName filename={filename} setFileName={setFileName} />
-        <button className="btn" onClick={downloadFile}>
-          download
-        </button>
+        {showSharedComp && showSharedComp === 1 ? (
+          <button className="btn" onClick={downloadFile}>
+            download
+          </button>
+        ) : (
+          ""
+        )}
         {showSharedComp && showSharedComp === 1 ? (
           <button className="btn" onClick={(e) => saveData(e)}>
             Save Updates

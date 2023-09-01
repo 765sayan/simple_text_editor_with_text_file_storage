@@ -36,7 +36,7 @@ export default function RegisterComp(props) {
           username
         </label>
         <input
-          id="username"
+          id="registerusername"
           type="text"
           onChange={(e) => setUserName(e.target.value)}
           className="auth-input"
@@ -46,7 +46,7 @@ export default function RegisterComp(props) {
           password
         </label>
         <input
-          id="password"
+          id="registerpassword"
           type="password"
           onChange={(e) => setPassword(e.target.value)}
           className="auth-input"

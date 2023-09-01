@@ -28,7 +28,7 @@ function App() {
         username: user.username,
       };
 
-      saveToLocalStorage(data);
+      saveToLocalStorage("auth", data);
     } else {
       if (getFromLocalStorage("auth")) {
         deleteFromLocalStorage("auth");

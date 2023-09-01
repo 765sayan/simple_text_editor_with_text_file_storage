@@ -1,5 +1,5 @@
 export const saveToLocalStorage = (key, value) => {
-  if (value !== "") {
+  if (value !== "" && value !== undefined) {
     const data = {
       id: value.token,
       username: value.username,
@@ -13,7 +13,7 @@ export const saveToLocalStorage = (key, value) => {
 };
 
 export const getFromLocalStorage = (key) => {
-  if (key !== "") {
+  if (key !== "" && key !== undefined) {
     return JSON.parse(localStorage.getItem(key));
   }
 };

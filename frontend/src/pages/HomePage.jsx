@@ -29,6 +29,13 @@ export default function HomePage() {
   const token = useContext(TokenContext);
   const setToken = useContext(SetTokenContext);
 
+  function dateAndTimeFormatter(dateAndTimeString) {
+    let date = dateAndTimeString.split("T")[0];
+    let time = dateAndTimeString.split("T")[1];
+
+    return `UTC ${date} ${time.split(".")[0]}`;
+  }
+
   async function listOfFiles(authToken) {
     let res = await getAllFiles(authToken);
     if (res !== undefined) {
@@ -40,6 +47,8 @@ export default function HomePage() {
             _v: element._v,
             textData: element.textData,
             filename: element.filename,
+            createdAt: dateAndTimeFormatter(element.createdAt),
+            updatedAt: dateAndTimeFormatter(element.updatedAt),
             state: "0",
           };
           fileNamesTemp.push(fileObject);
@@ -61,6 +70,8 @@ export default function HomePage() {
           creator: element.primaryOwner.username,
           textData: element.fileName.textData,
           filename: element.fileName.filename,
+          sharedAt: dateAndTimeFormatter(element.createdAt),
+          updatedAt: dateAndTimeFormatter(element.fileName.updatedAt),
           state: "0",
         };
         sharedFileNamesTemp.push(fileObject);
@@ -240,19 +251,15 @@ export default function HomePage() {
                             }}
                             className="newfile-button"
                           >
-                            <div
-                              className="fileicon-container-class"
-                              key={index}
-                            >
+                            <div className="fileicon-container-class">
                               <label
-                                htmlFor="img"
+                                htmlFor="sharedFileIconImg"
                                 className="fileicon-label"
-                                key={index}
                               >
                                 {element.filename}
                               </label>
                               <img
-                                id="img"
+                                id="sharedFileIconImg"
                                 src={fileIcon}
                                 width={200}
                                 height={200}
@@ -285,6 +292,22 @@ export default function HomePage() {
                                   }}
                                 >
                                   {element.creator}
+                                </p>
+                              </div>
+                              <div
+                                style={{
+                                  border: "solid",
+                                  borderRadius: "10px",
+                                  padding: "8px",
+                                  borderWidth: "2px",
+                                  color: "green",
+                                }}
+                              >
+                                <p style={{ fontSize: "1.4vh" }}>
+                                  shared at: {element.sharedAt}
+                                </p>
+                                <p style={{ fontSize: "1.4vh" }}>
+                                  updated at: {element.updatedAt}
                                 </p>
                               </div>
                             </div>
@@ -354,6 +377,7 @@ export default function HomePage() {
                       New File
                     </label>
                     <img id="img" src={fileIcon} width={200} height={200}></img>
+                    <div style={{ margin: "4vh" }}></div>
                   </div>
                 </div>
                 {fileNames.map((element, index) => {
@@ -377,20 +401,42 @@ export default function HomePage() {
                           }}
                           className="newfile-button"
                         >
-                          <div className="fileicon-container-class" key={index}>
-                            <label
-                              htmlFor="img"
-                              className="fileicon-label"
-                              key={index}
+                          <div className="fileicon-container-class">
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
                             >
-                              {element.filename}
-                            </label>
-                            <img
-                              id="img"
-                              src={fileIcon}
-                              width={200}
-                              height={200}
-                            ></img>
+                              <label htmlFor="img" className="fileicon-label">
+                                {element.filename}
+                              </label>
+                              <img
+                                id="img"
+                                src={fileIcon}
+                                width={200}
+                                height={200}
+                              ></img>
+                              <div
+                                style={{
+                                  border: "solid",
+                                  borderRadius: "10px",
+                                  padding: "8px",
+                                  borderWidth: "2px",
+                                  color: "green",
+                                  margin: "8px",
+                                }}
+                              >
+                                <p style={{ fontSize: "1.4vh" }}>
+                                  created at: {element.createdAt}
+                                </p>
+                                <p style={{ fontSize: "1.4vh" }}>
+                                  updated at: {element.updatedAt}
+                                </p>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </>

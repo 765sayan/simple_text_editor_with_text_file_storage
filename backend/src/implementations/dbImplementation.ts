@@ -292,7 +292,7 @@ export class ShareFileDbImplementation implements ShareFileDbInterface {
         })
           .populate("primaryOwner", "username")
           .populate("secondaryOwners", ["id", "username"])
-          .populate("fileName", ["filename", "textData"]);
+          .populate("fileName", ["filename", "textData", "updatedAt"]);
 
         return sharedFiles;
       } catch (err) {

@@ -41,7 +41,7 @@ export default function LoginComp(props) {
           username
         </label>
         <input
-          id="username"
+          id="loginusername"
           type="text"
           onChange={(e) => setUserName(e.target.value)}
           className="auth-input"
@@ -51,7 +51,7 @@ export default function LoginComp(props) {
           password
         </label>
         <input
-          id="password"
+          id="loginpassword"
           type="password"
           onChange={(e) => setPassword(e.target.value)}
           className="auth-input"
