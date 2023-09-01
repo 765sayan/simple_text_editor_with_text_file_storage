@@ -55,7 +55,11 @@ export default function HeaderComp(props) {
   async function saveData(e) {
     const textData = textArea.current.value;
     if (updateFile === true) {
-      const res = await updateFileData(filename, textData, authToken);
+      if (textData !== "") {
+        const res = await updateFileData(filename, textData, authToken);
+      } else {
+        const res = await updateFileData(filename, "", authToken);
+      }
     } else {
       if (textData !== "" || textData !== undefined) {
         const res = await sendTextDataToBackend(filename, textData, authToken);
