@@ -37,7 +37,7 @@ export default function LoginComp(props) {
         {msg === "" ? "" : <h2 className="fileicon-label">{msg}</h2>}
         <h1>Login</h1>
 
-        <label htmlFor="username" className="fileicon-label">
+        <label htmlFor="loginusername" className="fileicon-label">
           username
         </label>
         <input
@@ -47,7 +47,7 @@ export default function LoginComp(props) {
           className="auth-input"
         ></input>
 
-        <label htmlFor="password" className="fileicon-label">
+        <label htmlFor="loginpassword" className="fileicon-label">
           password
         </label>
         <input

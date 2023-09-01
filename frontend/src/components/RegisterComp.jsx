@@ -32,7 +32,7 @@ export default function RegisterComp(props) {
         {msg === "" ? "" : <h2 className="fileicon-label">{msg}</h2>}
         <h1>Register</h1>
 
-        <label htmlFor="username" className="fileicon-label">
+        <label htmlFor="registerusername" className="fileicon-label">
           username
         </label>
         <input
@@ -42,7 +42,7 @@ export default function RegisterComp(props) {
           className="auth-input"
         ></input>
 
-        <label htmlFor="password" className="fileicon-label">
+        <label htmlFor="registerpassword" className="fileicon-label">
           password
         </label>
         <input
