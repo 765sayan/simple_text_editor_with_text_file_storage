@@ -59,8 +59,6 @@ export default function HeaderComp(props) {
     } else {
       if (textData !== "" || textData !== undefined) {
         const res = await sendTextDataToBackend(filename, textData, authToken);
-      } else {
-        alert("Add Some Text To Create The File");
       }
 
       if (res === "No Connection To Server") {
