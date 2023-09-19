@@ -43,12 +43,11 @@ export default function AuthPage() {
           }}
         >
           <h1 style={{ margin: "8px", color: "#6299f1" }}>
-            Welcome To Text Editor App
+            Welcome To Text Editor App Project
           </h1>
           <h2 style={{ margin: "8px", color: "#2874f0" }}>Login Or Register</h2>
           <h4 style={{ margin: "8px", color: "#2874f0" }}>
-            In this application you can store text files, edit them and share
-            with others. Please open this application in a pc or laptop.
+            This is a portfolio project and here you can create, edit, view, update text files and share them with others. Here one needs to create an account.
           </h4>
         </div>
         <div className="auth-page-container">
