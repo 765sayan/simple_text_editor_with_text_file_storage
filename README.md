@@ -12,4 +12,4 @@ In this app one can: <br><br/>
     5. Versions of Shared Files: Whenever a file is shared with you and you try to edit the file. First you will have to create the file in your system. Then to share the new created file, you have to share with person concerned.<br></br>
 
 ## Link to the Hosted Project
-The link to the hosted version of this project is #### https://texteditorapp.onrender.com
+The link to the hosted version of this project is https://texteditorapp.onrender.com
