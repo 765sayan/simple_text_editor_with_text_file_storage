@@ -223,9 +223,6 @@ export class ShareFileDbImplementation implements ShareFileDbInterface {
           ["id", "username"]
         );
 
-        console.log("Hello");
-        console.log("workd");
-        console.log(sharedFile);
         if (sharedFile) {
           let secondaryOwners = sharedFile.secondaryOwners;
 
